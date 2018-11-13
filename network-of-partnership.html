@@ -1,0 +1,557 @@
+<html> 
+  <head> 
+        <meta charset="utf-8"> 
+        <title>Network of Partnerships for All Authors</title>
+    
+  </head> 
+
+  <style type="text/css">
+  		.tooltip{
+  			font-family:simsun;
+  			font-size:16px;
+  			width:120;
+  			height:auto;
+  			position:absolute; 
+  			text-align:center;
+  			border-style:solid;
+  			border-width:1px;
+  			background-color:white;
+  			border-radius:5px;	
+  		}
+		.link {
+			fill: none;
+			stroke: #666;
+			stroke-width: 1.5px;
+		}
+
+		#licensing {
+			fill: green;
+		}
+
+		.link.licensing {
+			stroke: green;
+		}
+
+		.link.resolved {
+			stroke-dasharray: 0,2 1;
+		}
+
+		circle {
+			fill: #ccc;
+			stroke: #333;
+			stroke-width: 1.5px;
+		}
+
+		text {
+			font: 12px Microsoft YaHei;
+			pointer-events: none;
+			text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
+		}
+
+		.linetext {
+			font-size: 10px Microsoft YaHei;
+		}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+var width = window.innerWidth;
+var height = window.innerHeight;
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+
+
+
+var links = [
+{source: "Aerts, HJ", target: "Parmar, C", type: "15",rela:"Cooperation"},             
+{source: "Lambin, P", target: "Leijenaar, RT", type: "15",rela:"Cooperation"},         
+{source: "Aerts, HJ", target: "Lambin, P", type: "12",rela:"Cooperation"},             
+{source: "Aerts, HJ", target: "Grossmann, P", type: "11",rela:"Cooperation"},          
+{source: "He, L", target: "Liang, C", type: "10",rela:"Cooperation"},                  
+{source: "Huang, Y", target: "Liang, C", type: "10",rela:"Cooperation"},               
+{source: "Liang, C", target: "Liu, Z", type: "10",rela:"Cooperation"},                 
+{source: "Lambin, P", target: "Parmar, C", type: "9",rela:"Cooperation"},              
+{source: "Lambin, P", target: "Parmar, C", type: "9",rela:"Cooperation"},              
+{source: "Liang, C", target: "Ma, Z", type: "8",rela:"Cooperation"},                   
+{source: "Wang, Y", target: "Yu, J", type: "8",rela:"Cooperation"},                    
+{source: "Aerts, HJ", target: "Leijenaar, RT", type: "7",rela:"Cooperation"},          
+{source: "Aerts, HJ", target: "Mak, RH", type: "7",rela:"Cooperation"},                
+{source: "Balagurunathan, Y", target: "Gillies, RJ", type: "7",rela:"Cooperation"},    
+{source: "Coroller, TP", target: "Mak, RH", type: "7",rela:"Cooperation"},             
+{source: "Giger, ML", target: "Li, H", type: "7",rela:"Cooperation"},                  
+{source: "Grossmann, P", target: "Lambin, P", type: "7",rela:"Cooperation"},           
+{source: "Liang, C", target: "Tian, J", type: "7",rela:"Cooperation"},                 
+{source: "Liu, Z", target: "Tian, J", type: "7",rela:"Cooperation"},                   
+{source: "Madabhushi, A", target: "Tiwari, P", type: "7",rela:"Cooperation"},          
+{source: "Carvalho, S", target: "Lambin, P", type: "6",rela:"Cooperation"},            
+{source: "Chen, X", target: "Liang, C", type: "6",rela:"Cooperation"},                 
+{source: "Dong, D", target: "Tian, J", type: "6",rela:"Cooperation"},                  
+{source: "Gillies, RJ", target: "Liu, Y", type: "6",rela:"Cooperation"},               
+{source: "Grossmann, P", target: "Parmar, C", type: "6",rela:"Cooperation"},           
+{source: "He, L", target: "Huang, Y", type: "6",rela:"Cooperation"},                   
+{source: "He, L", target: "Liu, Z", type: "6",rela:"Cooperation"},                     
+{source: "Huang, Y", target: "Liu, Z", type: "6",rela:"Cooperation"},                  
+{source: "Latifi, K", target: "Moros, EG", type: "6",rela:"Cooperation"},              
+{source: "Latifi, K", target: "Moros, EG", type: "6",rela:"Cooperation"},              
+{source: "Madabhushi, A", target: "Prasanna, P", type: "6",rela:"Cooperation"},        
+{source: "Prasanna, P", target: "Tiwari, P", type: "6",rela:"Cooperation"},            
+{source: "Aerts, HJ", target: "Carvalho, S", type: "5",rela:"Cooperation"},            
+{source: "Aerts, HJ", target: "Coroller, TP", type: "5",rela:"Cooperation"},           
+{source: "Aerts, HJ", target: "Haibe-Kains, B", type: "5",rela:"Cooperation"},         
+{source: "Balagurunathan, Y", target: "Liu, Y", type: "5",rela:"Cooperation"},         
+{source: "Balagurunathan, Y", target: "Schabath, MB", type: "5",rela:"Cooperation"},   
+{source: "Bussink, J", target: "Lambin, P", type: "5",rela:"Cooperation"},             
+{source: "Carvalho, S", target: "Leijenaar, RT", type: "5",rela:"Cooperation"},        
+{source: "Coroller, TP", target: "Narayan, V", type: "5",rela:"Cooperation"},          
+{source: "Coroller, TP", target: "Narayan, V", type: "5",rela:"Cooperation"},          
+{source: "Coroller, TP", target: "Huynh, E", type: "5",rela:"Cooperation"},            
+{source: "Coroller, TP", target: "Huynh, E", type: "5",rela:"Cooperation"},            
+{source: "Court, L", target: "Mackin, D", type: "5",rela:"Cooperation"},               
+{source: "Dong, D", target: "Liang, C", type: "5",rela:"Cooperation"},                 
+{source: "Drukker, K", target: "Li, H", type: "5",rela:"Cooperation"},                 
+{source: "Fave, X", target: "Yang, J", type: "5",rela:"Cooperation"},                  
+{source: "Fave, X", target: "Mackin, D", type: "5",rela:"Cooperation"},                
+{source: "Fave, X", target: "Yang, J", type: "5",rela:"Cooperation"},                  
+{source: "Gillies, RJ", target: "Leijenaar, RT", type: "5",rela:"Cooperation"},        
+{source: "Gillies, RJ", target: "Schabath, MB", type: "5",rela:"Cooperation"},         
+{source: "Gillies, RJ", target: "Lambin, P", type: "5",rela:"Cooperation"},            
+{source: "Gillies, RJ", target: "Li, Q", type: "5",rela:"Cooperation"},                
+{source: "Gillies, RJ", target: "Stringfield, O", type: "5",rela:"Cooperation"},       
+{source: "Guo, Y", target: "Wang, Y", type: "5",rela:"Cooperation"},                   
+{source: "Guo, Y", target: "Yu, J", type: "5",rela:"Cooperation"},                     
+{source: "Haibe-Kains, B", target: "Lambin, P", type: "5",rela:"Cooperation"},         
+{source: "Huynh, E", target: "Mak, RH", type: "5",rela:"Cooperation"},                 
+{source: "Lambin, P", target: "van Elmpt, W", type: "5",rela:"Cooperation"},           
+{source: "Li, Q", target: "Liu, Y", type: "5",rela:"Cooperation"},                     
+{source: "Liu, Y", target: "Ye, Z", type: "5",rela:"Cooperation"},                     
+{source: "Liu, Y", target: "Stringfield, O", type: "5",rela:"Cooperation"},            
+{source: "Mackin, D", target: "Yang, J", type: "5",rela:"Cooperation"},                
+{source: "Mak, RH", target: "Parmar, C", type: "5",rela:"Cooperation"},                
+{source: "Zhang, B", target: "Zhang, L", type: "5",rela:"Cooperation"},                
+{source: "Agrawal, V", target: "Mak, RH", type: "4",rela:"Cooperation"},               
+{source: "Bogowicz, M", target: "Guckenberger, M", type: "4",rela:"Cooperation"},      
+{source: "Bogowicz, M", target: "Studer, G", type: "4",rela:"Cooperation"},            
+{source: "Bogowicz, M", target: "Tanadini-Lang, S", type: "4",rela:"Cooperation"},     
+{source: "Chaddad, A", target: "Desrosiers, C", type: "4",rela:"Cooperation"},         
+{source: "Coroller, TP", target: "Agrawal, V", type: "4",rela:"Cooperation"},          
+{source: "Coroller, TP", target: "Hou, Y", type: "4",rela:"Cooperation"},              
+{source: "Court, L", target: "Fave, X", type: "4",rela:"Cooperation"},                 
+{source: "Dong, Y", target: "Zhang, B", type: "4",rela:"Cooperation"},                 
+{source: "Echegaray, S", target: "Napel, S", type: "4",rela:"Cooperation"},            
+{source: "Fave, X", target: "Zhang, L", type: "4",rela:"Cooperation"},                 
+{source: "Huang, W", target: "Zhang, B", type: "4",rela:"Cooperation"},                
+{source: "Jones, AK", target: "Fave, X", type: "4",rela:"Cooperation"},                
+{source: "Mo, X", target: "Zhang, B", type: "4",rela:"Cooperation"},                   
+{source: "Parmar, C", target: "Rietveld, D", type: "4",rela:"Cooperation"},            
+{source: "Zhang, B", target: "Zhang, S", type: "4",rela:"Cooperation"},                
+{source: "Aerts, HJ", target: "Hou, Y", type: "4",rela:"Cooperation"},                 
+{source: "Aerts, HJ", target: "Huynh, E", type: "4",rela:"Cooperation"},               
+{source: "Aerts, HJ", target: "Gillies, RJ", type: "4",rela:"Cooperation"},            
+{source: "Aerts, HJ", target: "Velazquez, ER", type: "4",rela:"Cooperation"},          
+{source: "Aerts, HJ", target: "Bussink, J", type: "4",rela:"Cooperation"},             
+{source: "Aerts, HJ", target: "Narayan, V", type: "4",rela:"Cooperation"},             
+{source: "Aerts, HJ", target: "Rios Velazquez, E", type: "4",rela:"Cooperation"},      
+{source: "Agrawal, V", target: "Narayan, V", type: "4",rela:"Cooperation"},            
+{source: "Agrawal, V", target: "Coroller, TP", type: "4",rela:"Cooperation"},          
+{source: "Balagurunathan, Y", target: "Kim, J", type: "4",rela:"Cooperation"},         
+{source: "Balagurunathan, Y", target: "Li, Q", type: "4",rela:"Cooperation"},          
+{source: "Balagurunathan, Y", target: "Stringfield, O", type: "4",rela:"Cooperation"}, 
+{source: "Balagurunathan, Y", target: "Kim, J", type: "4",rela:"Cooperation"},         
+{source: "Bussink, J", target: "Parmar, C", type: "4",rela:"Cooperation"},             
+{source: "Bussink, J", target: "Grossmann, P", type: "4",rela:"Cooperation"},          
+{source: "Chen, X", target: "Tian, J", type: "4",rela:"Cooperation"},                  
+{source: "Chen, X", target: "He, L", type: "4",rela:"Cooperation"},                    
+{source: "Coroller, TP", target: "Parmar, C", type: "4",rela:"Cooperation"},           
+{source: "Court, L", target: "Jones, AK", type: "4",rela:"Cooperation"},               
+{source: "Court, L", target: "Yang, J", type: "4",rela:"Cooperation"},                 
+{source: "Court, L", target: "Fave, X", type: "4",rela:"Cooperation"},                 
+{source: "Dilling, TJ", target: "Latifi, K", type: "4",rela:"Cooperation"},            
+{source: "Dilling, TJ", target: "Moros, EG", type: "4",rela:"Cooperation"},            
+{source: "Dong, D", target: "Liu, Z", type: "4",rela:"Cooperation"},                   
+{source: "Dong, Y", target: "Zhang, L", type: "4",rela:"Cooperation"},                 
+{source: "Dong, Y", target: "Mo, X", type: "4",rela:"Cooperation"},                    
+{source: "Dong, Y", target: "Huang, W", type: "4",rela:"Cooperation"},                 
+{source: "Dong, Y", target: "Zhang, S", type: "4",rela:"Cooperation"},                 
+{source: "Drukker, K", target: "Zhu, Y", type: "4",rela:"Cooperation"},                
+{source: "Drukker, K", target: "Giger, ML", type: "4",rela:"Cooperation"},             
+{source: "Echegaray, S", target: "Napel, S", type: "4",rela:"Cooperation"},            
+{source: "Giger, ML", target: "Zhu, Y", type: "4",rela:"Cooperation"},                 
+{source: "Gillies, RJ", target: "Latifi, K", type: "4",rela:"Cooperation"},            
+{source: "Gillies, RJ", target: "Moros, EG", type: "4",rela:"Cooperation"},            
+{source: "Gillies, RJ", target: "Ye, Z", type: "4",rela:"Cooperation"},                
+{source: "Gillies, RJ", target: "Parmar, C", type: "4",rela:"Cooperation"},            
+{source: "Grossmann, P", target: "Haibe-Kains, B", type: "4",rela:"Cooperation"},      
+{source: "Grossmann, P", target: "Leijenaar, RT", type: "4",rela:"Cooperation"},       
+{source: "Guckenberger, M", target: "Tanadini-Lang, S", type: "4",rela:"Cooperation"}, 
+{source: "Guckenberger, M", target: "Studer, G", type: "4",rela:"Cooperation"},        
+{source: "Haibe-Kains, B", target: "Parmar, C", type: "4",rela:"Cooperation"},         
+{source: "Haibe-Kains, B", target: "Leijenaar, RT", type: "4",rela:"Cooperation"},     
+{source: "Haibe-Kains, B", target: "Rios Velazquez, E", type: "4",rela:"Cooperation"}, 
+{source: "Haider, MA", target: "Wong, A", type: "4",rela:"Cooperation"},               
+{source: "Haider, MA", target: "Khalvati, F", type: "4",rela:"Cooperation"},           
+{source: "Hatt, M", target: "Visvikis, D", type: "4",rela:"Cooperation"},              
+{source: "He, L", target: "Tian, J", type: "4",rela:"Cooperation"},                    
+{source: "He, L", target: "Ma, Z", type: "4",rela:"Cooperation"},                      
+{source: "Hou, Y", target: "Mak, RH", type: "4",rela:"Cooperation"},                   
+{source: "Hou, Y", target: "Mak, RH", type: "4",rela:"Cooperation"},                   
+{source: "Huang, W", target: "Zhang, S", type: "4",rela:"Cooperation"},                
+{source: "Huang, W", target: "Zhang, L", type: "4",rela:"Cooperation"},                
+{source: "Huang, Y", target: "Ma, Z", type: "4",rela:"Cooperation"},                   
+{source: "Ji, Y", target: "Zhu, Y", type: "4",rela:"Cooperation"},                     
+{source: "Ji, Y", target: "Li, H", type: "4",rela:"Cooperation"},                      
+{source: "Jones, AK", target: "Yang, J", type: "4",rela:"Cooperation"},                
+{source: "Jones, AK", target: "Mackin, D", type: "4",rela:"Cooperation"},              
+{source: "Khalvati, F", target: "Wong, A", type: "4",rela:"Cooperation"},              
+{source: "Khalvati, F", target: "Wong, A", type: "4",rela:"Cooperation"},              
+{source: "Kim, J", target: "Li, Q", type: "4",rela:"Cooperation"},                     
+{source: "Kirienko, M", target: "Sollini, M", type: "4",rela:"Cooperation"},           
+{source: "Kirienko, M", target: "Sollini, M", type: "4",rela:"Cooperation"},           
+{source: "Lambin, P", target: "van Timmeren, JE", type: "4",rela:"Cooperation"},       
+{source: "Lambin, P", target: "Rios Velazquez, E", type: "4",rela:"Cooperation"},      
+{source: "Lambin, P", target: "Rios Velazquez, E", type: "4",rela:"Cooperation"},      
+{source: "Lee, HY", target: "Lee, KS", type: "4",rela:"Cooperation"},                  
+{source: "Leijenaar, RT", target: "van Timmeren, JE", type: "4",rela:"Cooperation"},   
+{source: "Leijenaar, RT", target: "van Elmpt, W", type: "4",rela:"Cooperation"},       
+{source: "Li, H", target: "Zhu, Y", type: "4",rela:"Cooperation"},                     
+{source: "Li, H", target: "Ji, Y", type: "4",rela:"Cooperation"},                      
+{source: "Li, Q", target: "Ye, Z", type: "4",rela:"Cooperation"},                      
+{source: "Li, Q", target: "Kim, J", type: "4",rela:"Cooperation"},                     
+{source: "Li, Z", target: "Wang, Y", type: "4",rela:"Cooperation"},                    
+{source: "Li, Z", target: "Yu, J", type: "4",rela:"Cooperation"},                      
+{source: "Liang, C", target: "Liang, C", type: "4",rela:"Cooperation"},                
+{source: "Liu, Y", target: "Schabath, MB", type: "4",rela:"Cooperation"},              
+{source: "Liu, Z", target: "Ma, Z", type: "4",rela:"Cooperation"},                     
+{source: "Mackin, D", target: "Zhang, L", type: "4",rela:"Cooperation"},               
+{source: "Mak, RH", target: "Narayan, V", type: "4",rela:"Cooperation"},               
+{source: "Mo, X", target: "Huang, W", type: "4",rela:"Cooperation"},                   
+{source: "Mo, X", target: "Zhang, S", type: "4",rela:"Cooperation"},                   
+{source: "Mo, X", target: "Zhang, L", type: "4",rela:"Cooperation"},                   
+{source: "Moros, EG", target: "Zhang, GG", type: "4",rela:"Cooperation"},              
+{source: "Parmar, C", target: "Rios Velazquez, E", type: "4",rela:"Cooperation"},      
+{source: "Parmar, C", target: "Velazquez, ER", type: "4",rela:"Cooperation"},          
+{source: "Riesterer, O", target: "Studer, G", type: "4",rela:"Cooperation"},           
+{source: "Riesterer, O", target: "Tanadini-Lang, S", type: "4",rela:"Cooperation"},    
+{source: "Riesterer, O", target: "Studer, G", type: "4",rela:"Cooperation"},           
+{source: "Schwartz, LH", target: "Zhao, B", type: "4",rela:"Cooperation"},             
+{source: "Studer, G", target: "Tanadini-Lang, S", type: "4",rela:"Cooperation"},       
+{source: "Tan, Y", target: "Zhao, B", type: "4",rela:"Cooperation"},                   
+{source: "Tian, J", target: "Zhang, L", type: "4",rela:"Cooperation"},                 
+{source: "van Elmpt, W", target: "van Timmeren, JE", type: "4",rela:"Cooperation"},    
+{source: "van Timmeren, JE", target: "van Timmeren, JE", type: "4",rela:"Cooperation"},
+{source: "Yang, J", target: "Zhang, L", type: "4",rela:"Cooperation"},                 
+{source: "Zhang, S", target: "Zhang, L", type: "4",rela:"Cooperation"},                
+{source: "Khalvati, F", target: "Sollini, M", type: "4",rela:"Cooperation"}, 
+];
+
+var nodes = {};
+
+links.forEach(function(link) {
+console.log(nodes); 
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+
+var force = d3.layout.force()//layout
+    .nodes(d3.values(nodes))//
+    .links(links)//
+    .size([width, height])//
+    .linkDistance(100)//
+    .charge(-1500)//
+    .on("tick", tick)//
+    .start();//
+	
+
+
+var tooltip = d3.select("body").append("div")
+    .attr("class","tooltip") //
+    .attr("opacity",0.0);
+
+
+
+    //
+var svg = d3.select("body").append("svg")
+.attr("width", width)
+.attr("height", height);
+			
+//
+var marker=
+    svg.append("marker")
+    //.attr("id", function(d) { return d; })
+    .attr("id", "resolved")
+    //.attr("markerUnits","strokeWidth")//
+    .attr("markerUnits","userSpaceOnUse")
+    .attr("viewBox", "0 -5 10 10")//
+    .attr("refX",1)//
+    .attr("refY", -1)
+    .attr("markerWidth", 10)//
+    .attr("markerHeight", 10)
+    .attr("orient", "auto")//
+    .attr("stroke-width",1)//
+    .append("path")
+    .attr("d", "M0,-5L10,0L0,5")//
+    .attr('fill','#000000');//
+
+
+//  
+var edges_line = svg.selectAll(".edgepath")
+    .data(force.links())
+    .enter()
+    .append("path")
+    .attr({
+          'd': function(d) {return 'M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y},
+          'class':'edgepath',
+          //'fill-opacity':0,
+          //'stroke-opacity':0,
+          //'fill':'blue',
+          //'stroke':'red',
+          'id':function(d,i) {return 'edgepath'+i;}})
+    .style("stroke",function(d){
+         var lineColor="#FF0000";
+         //
+
+         return lineColor;
+     })
+    .style("pointer-events", "none")
+    .style("stroke-width",0.5)//
+    .attr("marker-end", "url(#resolved)" );//
+
+
+
+var edges_text = svg.append("g").selectAll(".edgelabel")
+.data(force.links())
+.enter()
+.append("text")
+.style("pointer-events", "none")
+//.attr("class","linetext")
+.attr({  'class':'edgelabel',
+               'id':function(d,i){return 'edgepath'+i;},
+               'dx':50,
+               'dy':0
+               //'font-size':10,
+               //'fill':'#aaa'
+               });
+
+//
+edges_text.append('textPath')
+.attr('xlink:href',function(d,i) {return '#edgepath'+i})
+.style("pointer-events", "none")
+.text(function(d){return d.rela + ": " + d.type;});
+
+
+
+
+//
+var circle = svg.append("g").selectAll("circle")
+    .data(force.nodes())//
+    .enter().append("circle")
+    .style("fill",function(node){
+        var color;//
+        var link=links[node.index];
+        if(node.name == "Lung cancer" || node.name == "HCC" ||node.name == "Brain cancer" ||node.name == "Colorectal"){
+            color="#F9EBF9";
+        }else{
+            color="#32CD32";
+        }
+        return color;
+    })
+    .style('stroke',function(node){ 
+        var color;//
+        var link=links[node.index];
+        if(node.name== "Lung cancer"){
+            color="#B43232";
+        }else if(node.name== "HCC"){
+            color="#A254A2";
+        }else if(node.name== "Brain cancer"){
+            color="#32CD32";
+        }else if(node.name== "Colorectal"){
+            color="#007FFF";
+        }
+        return color;
+    })
+    .attr("r", 20)//
+
+    
+	.on("mouseover",function(node){
+		/*
+		
+		
+		
+		*/
+
+		tooltip.html("Name:" + node.name)
+            .style("right", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY + 20) + "py")
+            .style("opacity",1.0);
+	})
+	.on("mousemove",function(d){
+	/*  */
+
+    tooltip.style("left", (d3.event.pageX) + "px")
+            .style("top", (d3.event.pageY + 20) + "px");
+	})
+	.on("mouseout",function(d){
+	/* */
+
+    tooltip.style("opacity",0.0);
+	})
+	
+	
+    .on("click",function(node){
+        //
+        edges_line.style("stroke-width",function(line){
+            console.log(line);
+            if(line.source.name==node.name || line.target.name==node.name){
+                return 4;
+            }else{
+                return 0.5;
+            }
+        });
+        //d3.select(this).style('stroke-width',2);
+    })
+    .call(force.drag);//
+    /*
+
+	
+	
+	
+     */ 
+      
+  //
+  circle.append("svg:title")  
+	.text(function(node) { 
+            var link=links[node.index];
+            if(node.name == "Lung cancer" || node.name == "HCC" ||node.name == "Brain cancer" ||node.name == "Colorectal"){
+                return "Name: " + node.name + "\n" + "Click to check its relationship";
+            }
+         });  
+/* 
+
+
+
+
+
+
+
+});*/
+
+		   
+var text = svg.append("g").selectAll("text")
+    .data(force.nodes())
+    //
+    .enter()
+    .append("text")
+    .attr("dy", ".35em")  
+    .attr("text-anchor", "middle")//
+    .style('fill',function(node){
+        var color;//
+        var link=links[node.index];
+        if(node.name==link.source.name && link.rela=="Cooperation"){
+            color="#B43232";
+        }else{
+            color="#A254A2";
+        }
+        return color;
+    }).attr('x',function(d){
+        // console.log(d.name+"---"+ d.name.length);
+        var re_en = /[a-zA-Z]+/g;
+        //
+        if(d.name.match(re_en)){
+             d3.select(this).append('tspan')
+             .attr('x',0)
+             .attr('y',2)
+             .text(function(){return d.name;});
+        }
+        //
+        else if(d.name.length<=4){
+             d3.select(this).append('tspan')
+            .attr('x',0)
+            .attr('y',2)
+            .text(function(){return d.name;});
+        }else{
+            var top=d.name.substring(0,4);
+            var bot=d.name.substring(4,d.name.length);
+
+            d3.select(this).text(function(){return '';});
+
+            d3.select(this).append('tspan')
+                .attr('x',0)
+                .attr('y',-7)
+                .text(function(){return top;});
+
+            d3.select(this).append('tspan')
+                .attr('x',0)
+                .attr('y',10)
+                .text(function(){return bot;});
+        }
+        // 
+        /*.text(function(d) { 
+        return d.name; */
+    });
+
+/*  
+
+
+
+
+
+
+
+
+    });*/
+
+function tick() {
+  //path.attr("d", linkArc);//
+  circle.attr("transform", transform1);//
+  text.attr("transform", transform2);//
+  //edges_text.attr("transform", transform3);
+  //text2.attr("d", linkArc);//
+  //console.log("text2...................");
+  //console.log(text2);
+  //edges_line.attr("x1",function(d){ return d.source.x; });
+  //edges_line.attr("y1",function(d){ return d.source.y; });
+  //edges_line.attr("x2",function(d){ return d.target.x; });
+  //edges_line.attr("y2",function(d){ return d.target.y; });
+    
+  //edges_line.attr("x",function(d){ return (d.source.x + d.target.x) / 2 ; });
+  //edges_line.attr("y",function(d){ return (d.source.y + d.target.y) / 2 ; });
+
+
+  edges_line.attr('d', function(d) { 
+      var path='M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y;
+      return path;
+  });  
+    
+  edges_text.attr('transform',function(d,i){
+        if (d.target.x<d.source.x){
+            bbox = this.getBBox();
+            rx = bbox.x+bbox.width/2;
+            ry = bbox.y+bbox.height/2;
+            return 'rotate(180 '+rx+' '+ry+')';
+        }
+        else {
+            return 'rotate(0)';
+        }
+   });
+}
+
+			//
+			function linkArc(d) {
+
+			
+			
+			
+				return 'M '+d.source.x+' '+d.source.y+' L '+ d.target.x +' '+d.target.y
+			}
+			//
+			function transform1(d) {
+				return "translate(" + d.x + "," + d.y + ")";
+			}
+			function transform2(d) {
+				return "translate(" + (d.x) + "," + d.y + ")";
+			}
+		
+
+		</script>
+    </body> 
+</html>
